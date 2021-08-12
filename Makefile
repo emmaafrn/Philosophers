@@ -1,6 +1,6 @@
 NAME = ./srcs/philo
 
-SRCS = ./srcs/create_philo.c ./srcs/libft.c
+SRCS = ./srcs/create_philo.c ./srcs/libft.c ./srcs/time.c
 
 OBJS = ${SRCS:.c=.o}
 
@@ -10,7 +10,7 @@ CC  = gcc
 
 RM  = rm -f
 
-CFLAGS = -Wall -Wextra -Werror -I ./includes
+CFLAGS = -Wall -Wextra -Werror -O3 -I ./includes
 
 all:		$(NAME)
 

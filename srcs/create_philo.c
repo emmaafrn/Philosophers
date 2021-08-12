@@ -54,31 +54,74 @@ int	get_philo_data(int argc, char **argv, t_big_struct *data)
 	return (1);
 }
 
-void	get_two_forks()
+void	philo_is_speaking(char *str, t_big_struct *data, int id)
 {
-	
+	pthread_mutex_lock(&data->mutex_voice);
+	printf("%llu %d %s\n", get_time_difference(data->start_time),id + 1, str);
+	pthread_mutex_unlock(&data->mutex_voice);
 }
 
-void*	start()
+void	give_back_two_forks(t_philo *philo)
 {
+	pthread_mutex_unlock(&philo->data->mutex_tab[philo->id]);
+	if (philo->id == 0)
+		pthread_mutex_unlock(&philo->data->mutex_tab[philo->data->nb_philos - 1]);
+	else
+		pthread_mutex_unlock(&philo->data->mutex_tab[philo->id - 1]);
+}
+
+void	take_two_forks(t_philo *philo)
+{
+	usleep(80);
+	pthread_mutex_lock(&philo->data->mutex_tab[philo->id]);
+	philo_is_speaking("as taken a fork", philo->data, philo->id);
+	if (philo->id == 0)
+		pthread_mutex_lock(&philo->data->mutex_tab[philo->data->nb_philos - 1]);
+	else
+		pthread_mutex_lock(&philo->data->mutex_tab[philo->id - 1]);
+	philo_is_speaking("as taken a fork", philo->data, philo->id);
+}
+
+void*	start(void *arg)
+{
+	t_philo *philo;
+
+	philo = arg;
 	while (1)
 	{
-
+		take_two_forks(philo);
+		philo_is_speaking("is eating", philo->data, philo->id);
+		custom_usleep(philo->data->time_to_eat);
+		give_back_two_forks(philo);
+		philo_is_speaking("is sleeping", philo->data, philo->id);
+		custom_usleep(philo->data->time_to_sleep);
+		philo_is_speaking("is thinking", philo->data, philo->id);
 	}
+	return (NULL);
 }
 
-void	create_threads(t_philo **philo, t_big_struct *data)
+void	create_threads(t_philo *philo, t_big_struct *data)
 {
 	int	i;
 	int	ret;
 
 	i = 0;
 	ret = 0;
-	while (i < data->nb_philos && ret == 0)
+	data->mutex_tab = malloc(data->nb_philos * sizeof(pthread_mutex_t));
+	if (data->mutex_tab == NULL)
+		return ;
+	while (i < data->nb_philos)
 	{
-		philo[i]->id = i;
-		philo[i]->data = data;
-		ret = pthread_create(&philo[i]->thread, NULL, &start, NULL);
+		pthread_mutex_init(&data->mutex_tab[i], NULL);
+		i++;
+	}
+	pthread_mutex_init(&data->mutex_voice, NULL);
+	i = 0;
+	while (i < data->nb_philos)
+	{
+		philo[i].id = i;
+		philo[i].data = data;
+		ret = pthread_create(&philo[i].thread, NULL, &start, &philo[i]);
 		i++;
 	}
 }
@@ -105,5 +148,10 @@ int	main(int argc, char **argv)
 		printf("Error\n");
 		return (0);
 	}
-	create_threads(&philo, &data);
+	gettimeofday(&data.start_time, NULL);
+	create_threads(philo, &data);
+	while (1)
+	{
+
+	}
 }

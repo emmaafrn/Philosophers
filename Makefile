@@ -1,6 +1,6 @@
 NAME = ./srcs/philo
 
-SRCS = ./srcs/create_philo.c ./srcs/libft.c ./srcs/time.c
+SRCS = ./srcs/create_philo.c ./srcs/libft.c ./srcs/time.c ./srcs/parsing.c ./srcs/actions.c
 
 OBJS = ${SRCS:.c=.o}
 

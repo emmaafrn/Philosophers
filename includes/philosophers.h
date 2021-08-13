@@ -21,14 +21,15 @@
 
 typedef struct s_big_struct
 {
-	int				nb_philos;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				meals_nb;
-	pthread_mutex_t	*mutex_tab;
-	pthread_mutex_t	mutex_voice;
-	struct timeval	start_time;
+	int					nb_philos;
+	unsigned long long			time_to_die;
+	unsigned long long			time_to_eat;
+	unsigned long long			time_to_sleep;
+	int					meals_nb;
+	pthread_mutex_t		*mutex_tab;
+	pthread_mutex_t		mutex_voice;
+	struct timeval		start_time;
+	unsigned long long	*last_meals;
 }				t_big_struct;
 
 typedef struct s_philo
@@ -40,6 +41,13 @@ typedef struct s_philo
 
 size_t		ft_strlen(const char *s);
 int			ft_atoi(const char *nptr);
+void		init_philo_data(t_big_struct *data);
+void		init_last_meals(t_big_struct *data);
+int			is_there_only_digits(int argc, char **argv);
+void		philo_is_speaking(char *str, t_big_struct *data, int id);
+void		give_back_two_forks(t_philo *philo);
+void		take_two_forks(t_philo *philo);
+int			get_philo_data(int argc, char **argv, t_big_struct *data);
 uint64_t	get_time_difference(struct timeval old_time);
 void		custom_usleep(uint64_t reach);
 

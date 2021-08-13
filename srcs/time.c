@@ -12,6 +12,18 @@
 
 #include "../includes/philosophers.h"
 
+void	init_last_meals(t_big_struct *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->nb_philos)
+	{
+		data->last_meals[i] = 0;
+		i++;
+	}
+}
+
 uint64_t	get_time_difference(struct timeval old_time)
 {
 	struct timeval	current_time;

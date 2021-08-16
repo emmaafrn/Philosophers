@@ -22,14 +22,17 @@
 typedef struct s_big_struct
 {
 	int					nb_philos;
-	unsigned long long			time_to_die;
-	unsigned long long			time_to_eat;
-	unsigned long long			time_to_sleep;
+	unsigned long long	time_to_die;
+	unsigned long long	time_to_eat;
+	unsigned long long	time_to_sleep;
 	int					meals_nb;
-	pthread_mutex_t		*mutex_tab;
+	pthread_mutex_t		*forks;
 	pthread_mutex_t		mutex_voice;
 	struct timeval		start_time;
-	unsigned long long	*last_meals;
+	struct timeval		*last_meals;
+	pthread_mutex_t		*last_meal_mutex;
+	pthread_mutex_t		*meals_counter_mutex;
+	int					*meals_counter;
 }				t_big_struct;
 
 typedef struct s_philo

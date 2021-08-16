@@ -19,7 +19,7 @@ void	init_last_meals(t_big_struct *data)
 	i = 0;
 	while (i < data->nb_philos)
 	{
-		data->last_meals[i] = 0;
+		gettimeofday(&data->last_meals[i], NULL);
 		i++;
 	}
 }

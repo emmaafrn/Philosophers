@@ -17,7 +17,7 @@ void*	start(void *arg)
 	t_philo *philo;
 
 	philo = arg;
-	while (1)
+	while (philo->data->life)
 	{
 		if (philo->id % 2 != 0)
 			take_two_forks(philo);
@@ -49,7 +49,7 @@ void	create_threads(t_philo *philo, t_big_struct *data)
 	data->meals_counter = malloc(data->nb_philos * sizeof(int));
 	data->meals_counter_mutex = malloc(data->nb_philos * sizeof(pthread_mutex_t));
 	if (!data->forks || !data->last_meal_mutex || !data->meals_counter
-		|| !data->meals_counter_mutex)
+		|| !data->meals_counter_mutex || !data->last_meals)
 		return ;
 	while (i < data->nb_philos)
 	{
@@ -124,8 +124,12 @@ int	main(int argc, char **argv)
 			if (get_time_difference(data.last_meals[i]) > data.time_to_die
 				&& data.time_to_die >= 0)
 			{
+
+				// long long int yes = data.last_meals[i].tv_sec * 1000 + data.last_meals[i].tv_usec / 1000 - data.start_time.tv_sec * 1000 + data.start_time.tv_usec / 1000;
+				//  printf("AAAAA %llu\n", get_time_difference(data.last_meals[i]));
 				end = 1;
-				philo_is_speaking("died", &data, i);
+				data.life = 0;
+				philo_is_dying("died", &data, i);
 			}
 			pthread_mutex_unlock(&data.last_meal_mutex[i]);
 			pthread_mutex_lock(&data.meals_counter_mutex[i]);
@@ -134,11 +138,12 @@ int	main(int argc, char **argv)
 			pthread_mutex_unlock(&data.meals_counter_mutex[i]);
 			if (meals == data.nb_philos)
 			{
+				printf("nb philos = %d nb meals = %d\n", data.nb_philos, meals);
 				end = 1;
-				philo_is_speaking("has eaten enough", &data, i);
+				data.life = 0;
+				philo_is_dying("has eaten enough", &data, i);
 			}
 			i++;
 		}
 	}
-
 }

@@ -14,6 +14,7 @@
 
 void	init_philo_data(t_big_struct *data)
 {
+	data->life = 1;
 	data->nb_philos = 0;
 	data->time_to_die = 0;
 	data->time_to_eat = 0;

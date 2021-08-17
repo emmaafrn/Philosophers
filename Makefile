@@ -10,7 +10,7 @@ CC  = gcc
 
 RM  = rm -f
 
-CFLAGS = -Wall -Wextra -Werror -O3 -I ./includes
+CFLAGS = -Wall -Wextra -Werror -I ./includes -g
 
 all:		$(NAME)
 

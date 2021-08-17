@@ -33,6 +33,7 @@ uint64_t	get_time_difference(struct timeval old_time)
 	gettimeofday(&current_time, NULL);
 	time_i = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
 	time_j = old_time.tv_sec * 1000 + old_time.tv_usec / 1000;
+	// printf("current time = %llu\nold_time = %llu\n", time_i, time_j);
 	return (time_i - time_j);
 }
 

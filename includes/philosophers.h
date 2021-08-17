@@ -33,6 +33,7 @@ typedef struct s_big_struct
 	pthread_mutex_t		*last_meal_mutex;
 	pthread_mutex_t		*meals_counter_mutex;
 	int					*meals_counter;
+	int					life;
 }				t_big_struct;
 
 typedef struct s_philo
@@ -48,6 +49,7 @@ void		init_philo_data(t_big_struct *data);
 void		init_last_meals(t_big_struct *data);
 int			is_there_only_digits(int argc, char **argv);
 void		philo_is_speaking(char *str, t_big_struct *data, int id);
+void		philo_is_dying(char *str, t_big_struct *data, int id);
 void		give_back_two_forks(t_philo *philo);
 void		take_two_forks(t_philo *philo);
 int			get_philo_data(int argc, char **argv, t_big_struct *data);

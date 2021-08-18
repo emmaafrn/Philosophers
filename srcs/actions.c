@@ -29,10 +29,10 @@ void	philo_is_dying(char *str, t_big_struct *data, int id)
 
 	pthread_mutex_lock(&data->mutex_voice);
 	time = get_time_difference(data->start_time);
-	// if (id == -1)
-	// 	printf("%llu everyone %s\n", time, str);
-	// else
-	printf("%llu %d %s\n", time, id + 1, str);
+	if (id == -1)
+		printf("%llu %s\n", time, str);
+	else
+		printf("%llu %d %s\n", time, id + 1, str);
 	pthread_mutex_unlock(&data->mutex_voice);
 }
 

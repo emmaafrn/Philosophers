@@ -55,5 +55,12 @@ void		take_two_forks(t_philo *philo);
 int			get_philo_data(int argc, char **argv, t_big_struct *data);
 uint64_t	get_time_difference(struct timeval old_time);
 void		custom_usleep(uint64_t reach);
+void		meals_counter_init(t_big_struct *data);
+void		philo_mutex_init(t_big_struct *data);
+int			malloc_philo_data(t_big_struct *data);
+int			args_errors(int argc, char **argv, t_big_struct *data);
+int			create_threads(t_philo *philo, t_big_struct *data);
+void		end_up_philo(t_big_struct *data, t_philo *philo, int detach);
+void		good_bye_philo(t_philo *philo, int limit);
 
 #endif

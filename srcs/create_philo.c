@@ -12,9 +12,9 @@
 
 #include "../includes/philosophers.h"
 
-void*	start(void *arg)
+void	*hello_philo(void *arg)
 {
-	t_philo *philo;
+	t_philo	*philo;
 
 	philo = arg;
 	while (philo->data->life)
@@ -23,7 +23,7 @@ void*	start(void *arg)
 			take_two_forks(philo);
 		else
 		{
-			usleep(50);
+			usleep(60);
 			take_two_forks(philo);
 		}
 		philo_is_speaking("is eating", philo->data, philo->id);
@@ -31,119 +31,35 @@ void*	start(void *arg)
 		give_back_two_forks(philo);
 		philo_is_speaking("is sleeping", philo->data, philo->id);
 		custom_usleep(philo->data->time_to_sleep);
+		usleep(10);
 		philo_is_speaking("is thinking", philo->data, philo->id);
 	}
 	return (NULL);
 }
 
-void	create_threads(t_philo *philo, t_big_struct *data)
+int	create_threads(t_philo *philo, t_big_struct *data)
 {
 	int	i;
 	int	ret;
 
 	i = 0;
 	ret = 0;
-	data->forks = malloc(data->nb_philos * sizeof(pthread_mutex_t));
-	data->last_meals = malloc(data->nb_philos * sizeof(struct timeval));
-	data->last_meal_mutex = malloc(data->nb_philos * sizeof(pthread_mutex_t));
-	data->meals_counter = malloc(data->nb_philos * sizeof(int));
-	data->meals_counter_mutex = malloc(data->nb_philos * sizeof(pthread_mutex_t));
-	if (!data->forks || !data->last_meal_mutex || !data->meals_counter
-		|| !data->meals_counter_mutex || !data->last_meals)
-		return ;
-	while (i < data->nb_philos)
-	{
-		pthread_mutex_lock(&data->meals_counter_mutex[i]);
-		data->meals_counter[i] = 0;
-		pthread_mutex_unlock(&data->meals_counter_mutex[i]);
-		i++;
-	}
-	i = 0;
+	if (malloc_philo_data(data))
+		return (1);
+	meals_counter_init(data);
 	init_last_meals(data);
-	while (i < data->nb_philos)
-	{
-		pthread_mutex_init(&data->last_meal_mutex[i], NULL);
-		pthread_mutex_init(&data->forks[i], NULL);
-		pthread_mutex_init(&data->meals_counter_mutex[i], NULL);
-		i++;
-	}
-	pthread_mutex_init(&data->mutex_voice, NULL);
-	i = 0;
-	while (i < data->nb_philos)
+	philo_mutex_init(data);
+	while (i < data->nb_philos && ret == 0)
 	{
 		philo[i].id = i;
 		philo[i].data = data;
-		ret = pthread_create(&philo[i].thread, NULL, &start, &philo[i]);
+		ret = pthread_create(&philo[i].thread, NULL, &hello_philo, &philo[i]);
 		i++;
 	}
-}
-
-int	error_management(int argc, char **argv, t_big_struct *data)
-{
-	if (argc < 5 || argc > 6)
+	if (i < data->nb_philos)
 	{
-		printf("Error, argument(s) not valid(s)\n");
-		return (0);
+		good_bye_philo(philo, i);
+		return (1);
 	}
-	init_philo_data(data);
-	if (!get_philo_data(argc, argv, data))
-	{
-		printf("Error, argument(s) not valid(s)!\n");
-		return (0);
-	}
-	return (1);
-}
-
-int	main(int argc, char **argv)
-{
-	int				i;
-	t_big_struct	data;
-	t_philo			*philo;
-	int				end;
-	int				meals;
-
-	i = 0;
-	end = 0;
-	meals = 0;
-	if (!error_management(argc, argv, &data))
-		return (0);
-	philo = malloc(data.nb_philos * sizeof(t_philo));
-	if (philo == NULL)
-	{
-		printf("Error\n");
-		return (0);
-	}
-	gettimeofday(&data.start_time, NULL);
-	create_threads(philo, &data);
-	while (end == 0)
-	{
-		i = 0;
-		while (i < data.nb_philos && end == 0)
-		{
-			pthread_mutex_lock(&data.last_meal_mutex[i]);
-			if (get_time_difference(data.last_meals[i]) > data.time_to_die
-				&& data.time_to_die >= 0)
-			{
-
-				// long long int yes = data.last_meals[i].tv_sec * 1000 + data.last_meals[i].tv_usec / 1000 - data.start_time.tv_sec * 1000 + data.start_time.tv_usec / 1000;
-				//  printf("AAAAA %llu\n", get_time_difference(data.last_meals[i]));
-				end = 1;
-				data.life = 0;
-				philo_is_dying("died", &data, i);
-			}
-			pthread_mutex_unlock(&data.last_meal_mutex[i]);
-			pthread_mutex_lock(&data.meals_counter_mutex[i]);
-			if (argv[5] && data.meals_counter[i] == data.meals_nb)
-				meals++;
-			pthread_mutex_unlock(&data.meals_counter_mutex[i]);
-			if (meals == data.nb_philos)
-			{
-				printf("nb philos = %d nb meals = %d\n", data.nb_philos, meals);
-				end = 1;
-				data.life = 0;
-				philo_is_dying("has eaten enough", &data, i);
-			}
-			i++;
-		}
-	}
+	return (0);
 }

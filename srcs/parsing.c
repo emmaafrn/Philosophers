@@ -12,16 +12,6 @@
 
 #include "../includes/philosophers.h"
 
-void	init_philo_data(t_big_struct *data)
-{
-	data->life = 1;
-	data->nb_philos = 0;
-	data->time_to_die = 0;
-	data->time_to_eat = 0;
-	data->time_to_sleep = 0;
-	data->meals_nb = 0;
-}
-
 int	is_there_only_digits(int argc, char **argv)
 {
 	int	i;
